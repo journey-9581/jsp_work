@@ -12,9 +12,10 @@
 </head>
 <body>
 <div class="container">
+	<%-- 만일 id가 null이 아니라면 로그인을 한 상태이다 --%>
 	<%if(id!=null){ %>
 		<p>
-			<strong><%=id %></strong>님 로그인 중입니다
+			<a href="users/private/info.jsp"><%=id %></a>님 로그인 중입니다
 			<a href="users/logout.jsp">로그아웃</a>
 		</p>
 	<%}%>
