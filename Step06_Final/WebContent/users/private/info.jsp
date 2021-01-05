@@ -32,6 +32,7 @@
 				<td><%=dto.getRegdate() %></td>
 			</tr>
 		</table>
+		<a href="updateform.jsp">개인 정보 수정</a>
 		<a href="javascript:deleteConfirm()">탈퇴</a>
 	</div>
 	<script>
