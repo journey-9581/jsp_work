@@ -27,13 +27,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				<%for(CafeDto dto:list){ %>
+				<%for(CafeDto tmp:list){ %>
 				<tr>
-					<td><%=dto.getNum() %></td>
-					<td><%=dto.getWriter() %></td>
-					<td><%=dto.getTitle() %></td>
-					<td><%=dto.getViewCount() %></td>
-					<td><%=dto.getRegdate() %></td>
+					<td><%=tmp.getNum() %></td>
+					<td><%=tmp.getWriter() %></td>
+					<td><a href="detail.jsp?num=<%=tmp.getNum()%>"><%=tmp.getTitle() %></a></td>
+					<td><%=tmp.getViewCount() %></td>
+					<td><%=tmp.getRegdate() %></td>
 				</tr>
 			<%} %>
 			</tbody>
