@@ -1,5 +1,11 @@
+<%@page import="test.file.dto.FileDto"%>
+<%@page import="java.util.List"%>
+<%@page import="test.file.dao.FileDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	List<FileDto> list=FileDao.getInstance().getList();
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,7 +28,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				
+			<%for(FileDto tmp:list){%>
+				<tr>
+					<td><%=tmp.getNum() %></td>
+					<td><%=tmp.getWriter() %></td>
+					<td><%=tmp.getTitle() %></td>
+					<td><%=tmp.getOrgFileName() %></td>
+					<td><%=tmp.getFileSize() %></td>
+					<td><%=tmp.getRegdate() %></td>
+				</tr>
+			<%} %>
 			</tbody>
 		</table>
 	</div>
