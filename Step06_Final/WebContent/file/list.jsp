@@ -8,6 +8,7 @@
 </head>
 <body>
 	<div class="container">
+		<a href="private/upload_form.jsp">업로드 하러가기</a>
 		<h2>자료실 목록</h2>
 		<table>
 			<thead>
