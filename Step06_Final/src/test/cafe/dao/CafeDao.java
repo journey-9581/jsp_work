@@ -20,6 +20,45 @@ public class CafeDao {
 		}
 		return dao;
 	}
+	
+	//전체 row 의 갯수를 리턴하는 메소드
+	public int getCount() {
+		//글의 갯수를 담을 지역 변수
+		int count=0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DbcpBean().getConn();
+			//select 문 작성
+			String sql = "SELECT NVL(MAX(ROWNUM), 0) AS num"
+					+ " FROM board_cafe";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 바인딩 할게 있으면 여기서 바인딩한다.
+
+			//select 문 수행하고 ResultSet 받아오기
+			rs = pstmt.executeQuery();
+			//while문 혹은 if문에서 ResultSet 으로 부터 data 추출
+			if (rs.next()) {
+				count=rs.getInt("num");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
+	}
+	
 	//글 조회수를 올리는 메소드
 	public boolean addViewCount(int num) {
 		Connection conn=null;
@@ -196,7 +235,7 @@ public class CafeDao {
 	}
 	
 	//글 전체 목록을 리턴하는 메소드 
-	public List<CafeDto> getList(){
+	public List<CafeDto> getList(CafeDto dto){
 		List<CafeDto> list=new ArrayList<CafeDto>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -204,23 +243,29 @@ public class CafeDao {
 		try {
 			conn = new DbcpBean().getConn();
 			//select문 작성
-			String sql = "SELECT num, writer, title, viewCount, regdate"
-					+ " FROM board_cafe"
-					+ " ORDER BY num DESC";
+			String sql = "SELECT *" + 
+					"	 FROM" + 
+					"		   (SELECT result1.*, ROWNUM AS rnum" + 
+					"		   FROM" + 
+					"		       (SELECT num, writer, title, viewCount, regdate" + 
+					"		       FROM board_cafe" + 
+					"		       ORDER BY num DESC) result1)" + 
+					"	WHERE rnum BETWEEN ? AND ?";
 			pstmt = conn.prepareStatement(sql);
 			//?에 바인딩 할게 있으면 여기서 바인딩한다
-
+			pstmt.setInt(1, dto.getStartRowNum());
+			pstmt.setInt(2, dto.getEndRowNum());
 			//select문 수행하고 ResultSet 받아오기
 			rs = pstmt.executeQuery();
 			//while문 혹은 if문에서 ResultSet으로부터 data 추출
 			while (rs.next()) {
-				CafeDto dto=new CafeDto();
-				dto.setNum(rs.getInt("num"));
-				dto.setWriter(rs.getString("writer"));
-				dto.setTitle(rs.getString("title"));
-				dto.setViewCount(rs.getInt("viewCount"));
-				dto.setRegdate(rs.getString("regdate"));
-				list.add(dto);
+				CafeDto dto2=new CafeDto();
+				dto2.setNum(rs.getInt("num"));
+				dto2.setWriter(rs.getString("writer"));
+				dto2.setTitle(rs.getString("title"));
+				dto2.setViewCount(rs.getInt("viewCount"));
+				dto2.setRegdate(rs.getString("regdate"));
+				list.add(dto2);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

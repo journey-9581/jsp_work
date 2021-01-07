@@ -16,11 +16,25 @@
 <head>
 <meta charset="UTF-8">
 <title>/cafe/detail.jsp</title>
+<jsp:include page="../include/resource.jsp"></jsp:include>
 </head>
 <body>
+<jsp:include page="../include/navbar.jsp">
+	<jsp:param value="list" name="thisPage"/>
+</jsp:include>
 	<div class="container">
-		<h2>글 상세 페이지</h2>
-		<table>
+	<nav>
+		<ul class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="${pageContext.request.contextPath }/">홈</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a href="${pageContext.request.contextPath }/cafe/list.jsp">글 목록</a>
+			</li>
+			<li class="breadcrumb-item active"><%=dto.getTitle() %></li>
+		</ul>
+	</nav>
+		<table class="table table-bordered">
 			<tr>
 				<th>글 번호</th>
 				<td><%=dto.getNum() %></td>
@@ -43,7 +57,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<textarea><%=dto.getContent() %></textarea>
+					<textarea class="form-control" disabled><%=dto.getContent() %></textarea>
 				</td>
 			</tr>
 		</table>
@@ -51,13 +65,13 @@
 			//session scope에서 로그인 된 아이디를 읽어와본다 (null 일수도 있음)
 			String id=(String)session.getAttribute("id");
 		%>
-		<ul>
-			<li><a href="list.jsp">목록보기</a></li>
+		<dl>
+			<dd><a href="list.jsp">목록보기</a></dd>
 			<%if(dto.getWriter().equals(id)){ %>
-				<li><a href="${pageContext.request.contextPath }/cafe/private/updateform.jsp?num=<%=dto.getNum()%>">수정</a></li>
-				<li><a href="javascript:deleteConfirm()">삭제</a></li>
+				<dd><a href="${pageContext.request.contextPath }/cafe/private/updateform.jsp?num=<%=dto.getNum()%>">수정</a></dd>
+				<dd><a href="javascript:deleteConfirm()">삭제</a></dd>
 			<%} %>
-		</ul>
+		</dl>
 	</div>
 	<script>
 		function deleteConfirm(){
