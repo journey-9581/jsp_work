@@ -28,10 +28,10 @@
 		<div class="collapse navbar-collapse" id="topNav">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item <%=thisPage.equals("list") ? "active" : "" %>">
-					<a class="nav-link" href="${pageContext.request.contextPath }/cafe/list.jsp">글 목록 보기</a>
+					<a class="nav-link" href="${pageContext.request.contextPath }/cafe/list.jsp">글 목록</a>
 				</li>
-				<li class="nav-item <%=thisPage.equals("signup") ? "active" : "" %>">
-					<a class="nav-link" href="${pageContext.request.contextPath }/users/signup_form.jsp">회원가입</a>
+				<li class="nav-item <%=thisPage.equals("filelist") ? "active" : "" %>">
+					<a class="nav-link" href="${pageContext.request.contextPath }/file/list.jsp">자료실</a>
 				</li>
 			</ul>
 			<%
@@ -40,6 +40,7 @@
 			%>
 			<%if(id==null){ %>
 				<a class="btn btn-success btn-sm" href="${pageContext.request.contextPath }/users/loginform.jsp">로그인</a>
+				<a class="btn btn-danger btn-sm ml-1" href="${pageContext.request.contextPath }/users/signup_form.jsp">회원가입</a>
 			<%}else{ %>
 				<span class="navbar-text">
 					<a href="${pageContext.request.contextPath }/users/private/info.jsp"><%=id %></a> 님 접속중
