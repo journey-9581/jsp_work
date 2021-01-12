@@ -14,6 +14,7 @@
 <head>
 <meta charset="UTF-8">
 <title>/users/info.jsp</title>
+<jsp:include page="../../include/resource.jsp"></jsp:include>
 <style>
 	/* 프로필 이미지를 작은 원형으로 만든다 */
 	#profileImage{
@@ -25,12 +26,24 @@
 </style>
 </head>
 <body>
+<jsp:include page="../../include/navbar.jsp"></jsp:include>
 	<div class="container">
-		<h1>가입 정보</h1>
-		<table>
+		<nav>
+			<ul class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a href="${pageContext.request.contextPath }/">홈</a>
+				</li>
+				<li class="breadcrumb-item active">회원 정보</li>
+			</ul>
+		</nav>
+		<table class="table table-striped">
+			<colgroup>
+				<col width="150"/> <%-- 첫번째 칼럼의 넓이를 150 --%>
+				<col /> <%-- 칼럼의 갯수만큼 <col/> 필요 --%>
+			</colgroup>
 			<tr>
 				<th>아이디</th>
-				<td><%=dto.getId() %></td>
+				<td><%=dto.getId()%></td>
 			</tr>
 			<tr>
 				<th>프로필 이미지</th>
