@@ -23,7 +23,7 @@ public class FileDao {
 		return dao;
 	}
 	
-	//제목 파일명 검색인 경우의 row 갯수
+	//제목+파일명 검색인 경우의 row 갯수
 	public int getCountTF(FileDto dto) {
 		//글의 갯수를 담을 지역 변수
 		int count=0;
@@ -76,12 +76,80 @@ public class FileDao {
 	
 	//제목 검색인 경우의 row 갯수
 	public int getCountT(FileDto dto) {
-		return 0;
+		//글의 갯수를 담을 지역 변수
+		int count=0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DbcpBean().getConn();
+			//select 문 작성
+			String sql = "SELECT NVL(MAX(ROWNUM), 0) AS num"
+					+ " FROM board_file"
+					+ " WHERE title LIKE '%'||?||'%'";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 바인딩 할게 있으면 여기서 바인딩한다.
+			pstmt.setString(1, dto.getTitle());
+			//select 문 수행하고 ResultSet 받아오기
+			rs = pstmt.executeQuery();
+			//while문 혹은 if문에서 ResultSet 으로 부터 data 추출
+			if (rs.next()) {
+				count=rs.getInt("num");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
 	}
 
 	//작성자 검색인 경우의 row 갯수
 	public int getCountW(FileDto dto) {
-		return 0;
+		//글의 갯수를 담을 지역 변수
+		int count=0;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DbcpBean().getConn();
+			//select 문 작성
+			String sql = "SELECT NVL(MAX(ROWNUM), 0) AS num"
+					+ " FROM board_file"
+					+ " WHERE writer LIKE '%'||?||'%'";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 바인딩 할게 있으면 여기서 바인딩한다.
+			pstmt.setString(1, dto.getWriter());
+			//select 문 수행하고 ResultSet 받아오기
+			rs = pstmt.executeQuery();
+			//while문 혹은 if문에서 ResultSet 으로 부터 data 추출
+			if (rs.next()) {
+				count=rs.getInt("num");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
 	}
 	
 	//파일 정보를 삭제하는 메소드
@@ -196,6 +264,166 @@ public class FileDao {
 			}
 		}
 		return dto;
+	}
+	//제목+파일명 검색인 경우에 파일 목록 리턴
+	public List<FileDto> getListTF(FileDto dto){
+		List<FileDto> list=new ArrayList<FileDto>();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DbcpBean().getConn();
+			//select문 작성
+			String sql = "SELECT *" + 
+					"	 FROM" + 
+					"		   (SELECT result1.*, ROWNUM AS rnum" + 
+					"		   FROM" + 
+					"		       (SELECT num, writer, title, orgFileName, fileSize, regdate" + 
+					"		       FROM board_file" +
+					"              WHERE title LIKE '%'||?||'%'" +
+					"              OR orgFileName LIKE '%'||?||'%'"+
+					"		       ORDER BY num DESC) result1)" + 
+					"	WHERE rnum BETWEEN ? AND ?";
+			pstmt = conn.prepareStatement(sql);
+			//?에 바인딩 할게 있으면 여기서 바인딩한다
+			pstmt.setString(1, dto.getTitle());
+			pstmt.setString(2, dto.getOrgFileName());
+			pstmt.setInt(3, dto.getStartRowNum());
+			pstmt.setInt(4, dto.getEndRowNum());
+			//select문 수행하고 ResultSet 받아오기
+			rs = pstmt.executeQuery();
+			//while문 혹은 if문에서 ResultSet으로부터 data 추출
+			while (rs.next()) {
+				FileDto dto2=new FileDto();
+				dto2.setNum(rs.getInt("num"));
+				dto2.setWriter(rs.getString("writer"));
+				dto2.setTitle(rs.getString("title"));
+				dto2.setOrgFileName(rs.getString("orgFileName"));
+				dto2.setFileSize(rs.getLong("fileSize"));
+				dto2.setRegdate(rs.getString("regdate"));
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+	
+	//제목 검색인 경우에 파일 목록 리턴
+	public List<FileDto> getListT(FileDto dto){
+		List<FileDto> list=new ArrayList<FileDto>();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DbcpBean().getConn();
+			//select문 작성
+			String sql = "SELECT *" + 
+				"	 FROM" + 
+				"		   (SELECT result1.*, ROWNUM AS rnum" + 
+				"		   FROM" + 
+				"		       (SELECT num, writer, title, orgFileName, fileSize, regdate" + 
+				"		       FROM board_file" +
+				"              WHERE title LIKE '%'||?||'%'" +
+				"		       ORDER BY num DESC) result1)" + 
+				"	WHERE rnum BETWEEN ? AND ?";
+			pstmt = conn.prepareStatement(sql);
+			//?에 바인딩 할게 있으면 여기서 바인딩한다
+			pstmt.setString(1, dto.getTitle());
+			pstmt.setInt(2, dto.getStartRowNum());
+			pstmt.setInt(3, dto.getEndRowNum());
+			//select문 수행하고 ResultSet 받아오기
+			rs = pstmt.executeQuery();
+			//while문 혹은 if문에서 ResultSet으로부터 data 추출
+			while (rs.next()) {
+				FileDto dto2=new FileDto();
+				dto2.setNum(rs.getInt("num"));
+				dto2.setWriter(rs.getString("writer"));
+				dto2.setTitle(rs.getString("title"));
+				dto2.setOrgFileName(rs.getString("orgFileName"));
+				dto2.setFileSize(rs.getLong("fileSize"));
+				dto2.setRegdate(rs.getString("regdate"));
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
+	}
+		
+	//작성자 검색인 경우에 파일 목록 리턴
+	public List<FileDto> getListW(FileDto dto){
+		List<FileDto> list=new ArrayList<FileDto>();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DbcpBean().getConn();
+			//select문 작성
+			String sql = "SELECT *" + 
+				"	 FROM" + 
+				"		   (SELECT result1.*, ROWNUM AS rnum" + 
+				"		   FROM" + 
+				"		       (SELECT num, writer, title, orgFileName, fileSize, regdate" + 
+				"		       FROM board_file" +
+				"              WHERE writer LIKE '%'||?||'%'" +
+				"		       ORDER BY num DESC) result1)" + 
+				"	WHERE rnum BETWEEN ? AND ?";
+			pstmt = conn.prepareStatement(sql);
+			//?에 바인딩 할게 있으면 여기서 바인딩한다
+			pstmt.setString(1, dto.getWriter());
+			pstmt.setInt(2, dto.getStartRowNum());
+			pstmt.setInt(3, dto.getEndRowNum());
+			//select문 수행하고 ResultSet 받아오기
+			rs = pstmt.executeQuery();
+			//while문 혹은 if문에서 ResultSet으로부터 data 추출
+			while (rs.next()) {
+				FileDto dto2=new FileDto();
+				dto2.setNum(rs.getInt("num"));
+				dto2.setWriter(rs.getString("writer"));
+				dto2.setTitle(rs.getString("title"));
+				dto2.setOrgFileName(rs.getString("orgFileName"));
+				dto2.setFileSize(rs.getLong("fileSize"));
+				dto2.setRegdate(rs.getString("regdate"));
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return list;
 	}
 	
 	//파일 목록을 리턴하는 메소드

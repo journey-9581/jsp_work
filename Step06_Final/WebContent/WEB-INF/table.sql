@@ -31,4 +31,17 @@ CREATE TABLE board_file(
 	regdate DATE
 )
 
+-- 파일 번호를 얻어낼 시퀀스
 CREATE SEQUENCE board_file_seq;
+
+--
+CREATE TABLE board_gallery(
+	num NUMBER PRIMARY KEY,
+	writer VARCHAR2(100),
+	caption VARCHAR2(100),
+	imagePath VARCHAR2(100), -- /upload/xxx1.jpg
+	regdate DATE
+);
+
+--
+CREATE SEQUENCE board_gallery_seq;
