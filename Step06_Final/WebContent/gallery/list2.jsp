@@ -92,6 +92,39 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 	}
+	
+	/* img가 가운데 정렬 되도록 */
+	.back-drop{
+		/* 일단 숨겨 놓는다 */
+		display: none;
+		/* 화면 전체를 투명도가 있는 회색으로 덮기 위한 css */
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background-color: #cecece;
+		padding-top: 300px;
+		z-index: 10000;
+		opacity: 0.5;
+		text-align: center;
+	}
+	
+	.back-drop img{
+		width: 50px;
+		/* rotateAnimation이라는 키프레임을 2초 동안 무한 반복하기*/
+		animation: rotateAnimation 2s ease-out infinite;
+	}
+	
+	/* 회전하는 rotateAnimation이라는 이름의 키프레임 정의하기 */
+	@keyframes rotateAnimation{
+		0%{
+			transform: rotate(0deg);
+		}
+		100%{
+			transform: rotate(360deg);
+		}
+	}
 </style>
 </head>
 <body>
@@ -133,65 +166,35 @@
 		</div>
 		<%} %>
 	</div>
-	<nav>
-		<ul class="pagination justify-content-center">
-			<%if(startPageNum != 1){ %>
-				<li class="page-item">
-					<a class="page-link" href="list.jsp?pageNum=<%=startPageNum-1 %>&condition=<%=condition%>&keyword=<%=encodedK%>">Prev</a>
-				</li>
-			<%}else{ %>
-				<li class="page-item disabled">
-					<a class="page-link" href="javascript:">Prev</a>
-				</li>
-			<%} %>
-			<%for(int i=startPageNum; i<=endPageNum; i++) {%>
-				<%if(i==pageNum){ %>
-					<li class="page-item active">
-						<a class="page-link" href="list.jsp?pageNum=<%=i %>&condition=<%=condition%>&keyword=<%=encodedK%>"><%=i %></a>
-					</li>
-				<%}else{ %>
-					<li class="page-item">
-						<a class="page-link" href="list.jsp?pageNum=<%=i %>&condition=<%=condition%>&keyword=<%=encodedK%>"><%=i %></a>
-					</li>
-				<%} %>
-			<%} %>
-			<%if(endPageNum < totalPageCount){ %>
-				<li class="page-item">
-					<a class="page-link" href="list.jsp?pageNum=<%=endPageNum+1 %>&condition=<%=condition%>&keyword=<%=encodedK%>">Next</a>
-				</li>
-			<%}else{ %>
-				<li class="page-item disabled">
-					<a class="page-link" href="javascript:">Next</a>
-				</li>
-			<%} %>
-		</ul>
-	</nav>
-	<form action="list.jsp" method="get">
-			<label for="condition">검색 조건</label>
-			<select name="condition" id="condition">
-				<option value="caption" <%=condition.equals("caption")?"selected":"" %>>내용</option>
-				<option value="writer" <%=condition.equals("writer")?"selected":"" %>>작성자</option>
-			</select>
-			<input type="text" name="keyword" placeholder="검색어" value="<%=keyword %>"/>
-			<button type="submit">검색</button>
-		</form>
-	<%-- 만일 검색 키워드가 존재한다면 몇개의 글이 검색 되었는지 알려준다 --%>
-	<%if(!keyword.equals("")){%>
-		<div class="alert alert-success">
-			<strong><%=totalRow %></strong> 개의 자료가 검색되었습니다
-		</div>
-	<%} %>
+	<div class="back-drop">
+		<img src="${pageContext.request.contextPath }/svg/spinner-solid.svg"/>
+	</div>
 </div>
 <script>
-	function deleteConfirm(num){
-		let isDelete=confirm(num+"번 파일을 삭제하시겠습니까?");
-		if(isDelete){
-			location.href="private/delete.jsp?num="+num;
-		}
-	}
-	
 	//card 이미지의 부모 요소를 선택해서 imgLiquid 동작(jquery plugin 동작) 하기
 	$("img-wrapper").imgLiquid();
+
+	//웹브라우저의 창을 스크롤 할때마다 호출되는 함수 등록
+	$(window).on("scroll", function(){
+		console.log("scroll");
+		//최하단까지 스크롤 되었는지 조사해본다
+		let scrollTop=$(window).scrollTop();
+		let windowHeight=$(window).height();
+		let documentHeight=$(document).height();
+		
+		let isBottom=scrollTop+windowHeight+10>=documentHeight;
+		if(isBottom){
+			console.log("바닥");
+			//로딩바를 띄우고
+			$(".back-drop").show();
+			//추가로 받아올 페이지를 서버에 ajax 요청을 하고
+			
+			//응답이 오면 응답된 컨텐츠를 body에 추가하고
+			
+			//로딩바를 숨긴다
+
+		}
+	});
 </script>
 </body>
 </html>

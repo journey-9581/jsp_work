@@ -25,7 +25,7 @@
 			</div>
 			<div>
 				<label for="myFile">첨부파일</label>
-				<input type="file" name="myFile" id="myFile"/>
+				<input type="file" name="myFile" id="myFile" accept=".jpg, .jpge, .png, .JPG, .JPGE"/>
 			</div>
 			<button type="submit">업로드</button>
 		</form>
