@@ -8,13 +8,15 @@ public class GalleryDto {
 	private String regdate;
 	private int startRowNum;
 	private int endRowNum;
+	private int PrevNum; //이전 글의 글 번호
+	private int NextNum; //다음 글의 글 번호
 	
 	public GalleryDto() {
 		
 	}
 
 	public GalleryDto(int num, String writer, String caption, String imagePath, String regdate, int startRowNum,
-			int endRowNum) {
+			int endRowNum, int prevNum, int nextNum) {
 		super();
 		this.num = num;
 		this.writer = writer;
@@ -23,6 +25,8 @@ public class GalleryDto {
 		this.regdate = regdate;
 		this.startRowNum = startRowNum;
 		this.endRowNum = endRowNum;
+		PrevNum = prevNum;
+		NextNum = nextNum;
 	}
 
 	public int getNum() {
@@ -80,5 +84,21 @@ public class GalleryDto {
 	public void setEndRowNum(int endRowNum) {
 		this.endRowNum = endRowNum;
 	}
-	
+
+	public int getPrevNum() {
+		return PrevNum;
+	}
+
+	public void setPrevNum(int prevNum) {
+		PrevNum = prevNum;
+	}
+
+	public int getNextNum() {
+		return NextNum;
+	}
+
+	public void setNextNum(int nextNum) {
+		NextNum = nextNum;
+	}
+
 }

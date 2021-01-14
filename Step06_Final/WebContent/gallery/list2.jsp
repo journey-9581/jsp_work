@@ -17,39 +17,16 @@
 	int startRowNum=1+(pageNum-1)*PAGE_ROW_COUNT;
 	int endRowNum=pageNum*PAGE_ROW_COUNT;
 	
-	String keyword=request.getParameter("keyword");
-	String condition=request.getParameter("condition");
-	if(keyword==null){
-		keyword="";
-		condition="";
-	}
-	
-	String encodedK=URLEncoder.encode(keyword);
-	
 	GalleryDto dto=new GalleryDto();
 	dto.setStartRowNum(startRowNum);
 	dto.setEndRowNum(endRowNum);
 	
-	List<GalleryDto> list=null;
-	int totalRow=0;
-	if(!keyword.equals("")){
-		if(condition.equals("caption")){
-			dto.setCaption(keyword);
-			list=GalleryDao.getInstance().getListC(dto);
-			totalRow=GalleryDao.getInstance().getCountC(dto);
-		}else if(condition.equals("writer")){
-			dto.setWriter(keyword);
-			list=GalleryDao.getInstance().getListW(dto);
-			totalRow=GalleryDao.getInstance().getCountW(dto);
-		}
-	}else{
-		list=GalleryDao.getInstance().getList(dto);
-		totalRow=GalleryDao.getInstance().getCount();
-	}
+	List<GalleryDto> list=GalleryDao.getInstance().getList(dto);
 	
 	int startPageNum = 1 + ((pageNum-1)/PAGE_DISPLAY_COUNT)*PAGE_DISPLAY_COUNT;
 	int endPageNum=startPageNum+PAGE_DISPLAY_COUNT-1;
-		
+	
+	int totalRow=GalleryDao.getInstance().getCount();
 	int totalPageCount=(int)Math.ceil(totalRow/(double)PAGE_ROW_COUNT);
 	if(endPageNum > totalPageCount){
 		endPageNum=totalPageCount;
@@ -151,7 +128,7 @@
 			device 폭 992px 이상에서 칼럭의 폭 => 3/12 (25%)
 		 -->
 		<div class="col-6 col-md-4 col-lg-3">
-			<a href="detail.jsp?num=<%=tmp.getNum() %>">
+			<a href="detail2.jsp?num=<%=tmp.getNum() %>">
 				<div class="card mb-3">
 					<div class="img-wrapper">
 						<img class="card-img-top" src="${pageContext.request.contextPath }<%=tmp.getImagePath()%>"/>
@@ -173,31 +150,50 @@
 <script>
 	//card 이미지의 부모 요소를 선택해서 imgLiquid 동작(jquery plugin 동작) 하기
 	$("img-wrapper").imgLiquid();
-
+	
+	//페이지가 처음 로딩될때 1 page를 보여주기 때문에 초기값을 1로 지정한다
+	let currentPage=1; //화면 상에 로딩된 최신 페이지 번호를 저장할 변수
+	//현재 페이지가 로딩중인지 여부를 저장할 변수
+	let isLoading=false;
+	
 	//웹브라우저의 창을 스크롤 할때마다 호출되는 함수 등록
 	$(window).on("scroll", function(){
-		console.log("scroll");
 		//최하단까지 스크롤 되었는지 조사해본다
+		//위로 스크롤 된 길이
 		let scrollTop=$(window).scrollTop();
+		//웹브라우저 창의 높이
 		let windowHeight=$(window).height();
+		//문서 전체의 높이
 		let documentHeight=$(document).height();
-		
+		//바닥까지 스크롤 되었는지 여부를 알아낸다
 		let isBottom=scrollTop+windowHeight+10>=documentHeight;
 		if(isBottom){
-			console.log("바닥");
+			//만일 현재가 마지막 페이지라면
+			if(currentPage==<%=totalPageCount%>||isLoading){
+				return; //함수를 여기서 끝낸다
+			}
+			//현재 로딩 중이라고 표시한다
+			isLoading=true;
 			//로딩바를 띄우고
 			$(".back-drop").show();
+			//요청할 페이지 번호를 1 증가 시킨다
+			currentPage++;
 			//추가로 받아올 페이지를 서버에 ajax 요청을 하고 / $.ajax()로 요청하고 ()안 option들은 object
 			$.ajax({
 				url: "ajax_page.jsp",
 				method: "GET",
-				data: "pageNum=2",
+				data: "pageNum="+currentPage, //{pageNum:currentPage}도 가능 (즉, object를 넣어도 됨! query문자열이나 object 둘 다 가능, jquery가 알아서 해줌)
 				success:function(data){
 					//응답된 문자열은 html 형식이다
 					//해당 문자열을 #galleryList div에 html로 해석하라고 추가한다
 					$("#galleryList").append(data);
+					//=document.querySelector("#galleryList").append(data);
 					//로딩바를 숨긴다
 					$(".back-drop").hide();
+					//현재 추가된 img 요소의 부모 div를 선택해서 imgLiquid() 동작하기
+					$(".page-"+currentPage).imgLiquid();
+					//로딩중이 아니라고 표시한다
+					isLoading=false;
 				}
 			});
 		}

@@ -183,13 +183,6 @@
 	<%} %>
 </div>
 <script>
-	function deleteConfirm(num){
-		let isDelete=confirm(num+"번 파일을 삭제하시겠습니까?");
-		if(isDelete){
-			location.href="private/delete.jsp?num="+num;
-		}
-	}
-	
 	//card 이미지의 부모 요소를 선택해서 imgLiquid 동작(jquery plugin 동작) 하기
 	$("img-wrapper").imgLiquid();
 </script>
