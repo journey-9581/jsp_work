@@ -36,7 +36,7 @@
 		<div class="card-body">
 			<h5 class="card-title"><strong><%=dto.getCaption() %></strong></h5>
 			<p class="card-text">by <%=dto.getWriter() %></p>
-			<p class="card-text"><%=dto.getRegdate() %></p>
+			<small class="card-text"><%=dto.getRegdate() %></small>
 			<%
 			//session scope에서 로그인 된 아이디를 읽어와본다 (null 일수도 있음)
 			String id=(String)session.getAttribute("id");
