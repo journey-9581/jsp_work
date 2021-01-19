@@ -71,7 +71,7 @@
 		let isPwdValid=false;
 		//이메일 유효성 여부를 관리할 변수 만들고 초기값 부여하기
 		let isEmailValid=false;
-		//폼 전ㅊ의 유효성 여부를 관리할 변수 만들고 초기값 부여하기
+		//폼 전체의 유효성 여부를 관리할 변수 만들고 초기값 부여하기
 		let isFormValid=false;
 		
 		//폼에 submit 이벤트가 일어났을때 jquery를 활용해서 폼에 입력한 내용 검증하기
@@ -81,7 +81,7 @@
 			isFormValid=isIdValid&&isPwdValid&&isEmailValid;
 			//만일 폼이 유효하지 않다면
 			if(!isFormValid){
-				return false;
+				return false; //폼 전송 막기
 			}
 		});
 		
@@ -95,8 +95,8 @@
  			let pwd2=$("#pwd2").val();
  			//일단 모든 검증 클래스를 제거하고
  			$("#pwd").removeClass("is-valid is-invalid");
- 			//만일 비밀번호를 4글자 이상 입력하지 않았다면
-			if(pwd.length<4){
+ 			//비밀번호가 정규 표현식에 매칭되지 않으면
+			if(!reg_pwd.test(pwd)){
 				//비밀번호가 유효하지 않다고 표시하고
 			 	$("#pwd").addClass("is-invalid");
 			 	isPwdValid=false;
@@ -122,10 +122,9 @@
 			//2. 서버에 ajax 요청으로 보내서 사용 가능 여부를 응답 받은 후 반응을 보여준다
 			//일단 모든 검증 클래스를 제거하고
 			$("#id").removeClass("is-valid is-invalid");
-			//입력한 문자열의 길이를 얻어낸다
-			let length=inputId.length;
-			//만일 문자열의 길이가 4보다 작으면
-			if(length<4){
+			
+			//입력한 문자열이 정규표현식과 매칭되는지 테스트
+			if(!reg_id.test(inputId)){//만일 매칭되지 않으면
 				//아이디가 유효하지 않다고 표시하고
 				$("#id").addClass("is-invalid");
 				isIdValid=false;
@@ -155,6 +154,21 @@
 					}
 				}
 			});
+		});
+		
+		//이메일을 입력했을때 실행할 함수 등록
+		$("#email").on("input", function(){
+			let inputEmail=$("#email").val();
+			//일단 모든 검증 클래스를 제거하고
+			$("#email").removeClass("is-valid is-invalid");
+			//만일 이메일이 정규표현식에 매칭되지 않는다면
+			if(!reg_email.test(inputEmail)){
+				isEmailValid=false;
+				$("#email").addClass("is-invalid");
+			}else{
+				isEmailValid=true;
+				$("#email").addClass("is-valid");
+			}
 		});
 	</script>
 </body>
