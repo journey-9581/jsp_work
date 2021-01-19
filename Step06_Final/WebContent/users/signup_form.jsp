@@ -18,18 +18,23 @@
 				<li class="breadcrumb-item active">회원가입</li>
 			</ul>
 		</nav>
-		<form action="signup.jsp" method="post" id="myForm">
+		<!-- 
+			[novalidate로 웹브라우저 자체의 검증기능 사용하지 않기]
+			<input type="email"/> 같은 경우 웹브라우저가 직접 개입하기도 한다
+			해당 기능을 사용하지 않기 위해서는 novalidate를 form에 명시해야 한다
+		 -->
+		<form action="signup.jsp" method="post" id="myForm" novalidate>
 			<div class="form-group">
 				<label for="id">아이디</label>
 				<input type="text" class="form-control" name="id" id="id"/>
-				<small class="form-text text-muted">아이디는 4글자 이상 영문과 숫자로 만들어주세요</small>
+				<small class="form-text text-muted">아이디는 소문자로 시작하여 5~10자 이내로 입력해주세요</small>
 				<div class="invalid-feedback">사용할 수 없는 아이디 입니다</div>
 			</div>
 			<div class="form-group">
 				<label for="pwd">비밀번호</label>
 				<input type="password" class="form-control" name="pwd" id="pwd"/>
-				<small class="form-text text-muted">비밀번호는 4자 이상 영문과 숫자로 만들어주세요</small>
-				<div class="invalid-feedback">비밀번호를 확인하세요</div>
+				<small class="form-text text-muted">비밀번호는 5~10자 이내로 입력해주세요</small>
+				<div class="invalid-feedback">사용할 수 없는 비밀번호 입니다</div>
 			</div>
 			<div class="form-group">
 				<label for="pwd2">비밀번호 확인</label>
@@ -39,25 +44,43 @@
 				<label for="email">이메일</label>
 				<input type="email" class="form-control" name="email" id="email"/>
 				<small class="form-text text-muted">사용 가능한 이메일을 작성해주세요</small>
+				<div class="invalid-feedback">이메일 형식을 확인하세요</div>
 			</div>
 			<button type="submit" class="btn btn-outline-primary">가입</button>
 		</form>
 	</div>
 	<script>
+		//let reg=/ /;
+		//let reg=new RegExp(" ");
+		
+		//[아이디를 검증할 정규 표현식]
+		//영문자 소문자로 시작하고 5~10 글자 이내인지 검증
+		let reg_id=/^[a-z].{4,9}$/;
+		
+		//[비밀번호를 검증할 정규 표현식]
+		//5~10 글자 이내인지 검증
+		let reg_pwd=/^.{5,10}$/;
+		
+		//[이메일을 검증할 정규 표현식] (정확히 검증하려면 javascript 이메일 정규 표현식 검색해서 사용!)
+		//@가 포함되어 있는지 검증
+		let reg_email=/@/;
+		
 		//아이디 유효성 여부를 관리할 변수 만들고 초기값 부여하기
 		let isIdValid=false;
 		//비밀번호 유효성 여부를 관리할 변수 만들고 초기값 부여하기
 		let isPwdValid=false;
+		//이메일 유효성 여부를 관리할 변수 만들고 초기값 부여하기
+		let isEmailValid=false;
+		//폼 전ㅊ의 유효성 여부를 관리할 변수 만들고 초기값 부여하기
+		let isFormValid=false;
 		
 		//폼에 submit 이벤트가 일어났을때 jquery를 활용해서 폼에 입력한 내용 검증하기
 		//id가 myForm인 요소에 submit 이벤트가 일어났을때 실행할 함수 등록
 		$("#myForm").on("submit", function(){
-			//만일 아이디를 제대로 입력하지 않았으면 폼 전송을 막는다
-			if(!isIdValid){
-				return false;
-			}
-			//만일 비밀번호를 제대로 입력하지 않았으면 폼 전송을 막는다
-			if(!isPwdValid){
+			//폼 전체의 유효성 여부를 얻어낸다
+			isFormValid=isIdValid&&isPwdValid&&isEmailValid;
+			//만일 폼이 유효하지 않다면
+			if(!isFormValid){
 				return false;
 			}
 		});

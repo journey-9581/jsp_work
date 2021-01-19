@@ -41,11 +41,13 @@
 			//session scope에서 로그인 된 아이디를 읽어와본다 (null 일수도 있음)
 			String id=(String)session.getAttribute("id");
 			%>
-			<a href="list.jsp" class="btn btn-outline-success">갤러리 목록</a>
-			<%if(dto.getWriter().equals(id)){ %>
-				<a href="${pageContext.request.contextPath }/gallery/private/updateform.jsp?num=<%=dto.getNum()%>" class="btn btn-outline-warning">수정</a>
-				<a href="javascript:deleteConfirm()" class="btn btn-outline-danger">삭제</a>
-			<%} %>
+			<div>
+				<a href="list.jsp" class="btn btn-outline-success">갤러리 목록</a>
+				<%if(dto.getWriter().equals(id)){ %>
+					<a href="${pageContext.request.contextPath }/gallery/private/updateform.jsp?num=<%=dto.getNum()%>" class="btn btn-outline-warning">수정</a>
+					<a href="javascript:deleteConfirm()" class="btn btn-outline-danger">삭제</a>
+				<%} %>
+			</div>
 		</div>
 	</div>
 </div>

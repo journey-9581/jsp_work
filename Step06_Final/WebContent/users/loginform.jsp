@@ -1,13 +1,101 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	//쿠키에 저장된 아이디와 비밀번호를 담을 변수
+	String savedId="";
+	String savedPwd="";
+	//쿠키에 저장된 값을 위의 변수에 저장하는 코드를 작성해 보세요.
+	Cookie[] cooks=request.getCookies();
+	if(cooks!=null){
+		//반복문 돌면서 쿠키객체를 하나씩 참조해서 
+		for(Cookie tmp: cooks){
+			//저장된 키값을 읽어온다.
+			String key=tmp.getName();
+			//만일 키값이 savedId 라면 
+			if(key.equals("savedId")){
+				//쿠키 value 값을 savedId 라는 지역변수에 저장
+				savedId=tmp.getValue();
+			}
+			if(key.equals("savedPwd")){
+				savedPwd=tmp.getValue();
+			}
+		}
+	}
+%>
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+		html,
+		body {
+		  height: 100%;
+		}
+		
+		body {
+		  display: -ms-flexbox;
+		  display: flex;
+		  -ms-flex-align: center;
+		  align-items: center;
+		  padding-top: 40px;
+		  padding-bottom: 40px;
+		  background-color: #f5f5f5;
+		}
+		
+		.form-signin {
+		  width: 100%;
+		  max-width: 330px;
+		  padding: 15px;
+		  margin: auto;
+		}
+		
+		.form-signin .checkbox {
+		  font-weight: 400;
+		}
+		
+		.form-signin .form-control {
+		  position: relative;
+		  box-sizing: border-box;
+		  height: auto;
+		  padding: 10px;
+		  font-size: 16px;
+		}
+		
+		.form-signin .form-control:focus {
+		  z-index: 2;
+		}
+		
+		.form-signin input[type="email"] {
+		  margin-bottom: -1px;
+		  border-bottom-right-radius: 0;
+		  border-bottom-left-radius: 0;
+		}
+		
+		.form-signin input[type="password"] {
+		  margin-bottom: 10px;
+		  border-top-left-radius: 0;
+		  border-top-right-radius: 0;
+		}
+
+        .bd-placeholder-img {
+          font-size: 1.125rem;
+          text-anchor: middle;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+
+        @media (min-width: 768px) {
+          .bd-placeholder-img-lg {
+            font-size: 3.5rem;
+          }
+        }
+</style>
 <meta charset="UTF-8">
 <title>/users/loginform.jsp</title>
 <jsp:include page="../include/resource.jsp"></jsp:include>
 </head>
-<body>
+<body class="text-center">
 <%
 	//GET 방식 파라미터 url이라는 이름으로 전달되는 값이 있는지 읽어와보기
 	String url=request.getParameter("url");
@@ -21,29 +109,21 @@
 	<jsp:param value="login" name="thisPage"/>
 </jsp:include>
 	<div class="container">
-		<nav>
-			<ul class="breadcrumb">
-				<li class="breadcrumb-item">
-					<a href="${pageContext.request.contextPath }/">홈</a>
-				</li>
-				<li class="breadcrumb-item active">로그인</li>
-			</ul>
-		</nav>
-		<form action="login.jsp" method="post">
+		<form class="form-signin" action="login.jsp" method="post">
 			<%-- 원래 가려던 목적지 정보를 url이라는 파라미터 명으로 전송될 수 있도록 한다 --%>
 			<input type="hidden" name="url" value="<%=url %>"/>
-			<div class="form-group">
-				<label for="id">아이디</label>
-				<input type="text" class="form-control" name="id" id="id"/>
-				<small class="form-text text-muted">아이디를 입력해주세요</small>
-			</div>
-			<div class="form-group">
-				<label for="pwd">비밀번호</label>
-				<input type="password" class="form-control" name="pwd" id="pwd"/>
-				<small class="form-text text-muted">비밀번호를 입력해주세요</small>
-			</div>
-			<button type="submit" class="btn btn-secondary">로그인</button>
-		</form>
+  			<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+  			<label for="id" class="sr-only">Email address</label>
+  			<input type="text" id="id" name="id" class="form-control" placeholder="아이디 입력" value="<%=savedId %>" required autofocus>
+  			<label for="pwd" class="sr-only">Password</label>
+  			<input type="password" id="pwd" name="pwd" class="form-control" placeholder="비밀번호 입력" value="<%=savedPwd %>" required>
+ 			<div class="checkbox mb-3">
+    			<label>
+      				<input type="checkbox" name="isSave" value="yes"> 로그인 정보 저장
+    			</label>
+  			</div>
+  		<button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+  		<p class="mt-5 mb-3 text-muted">&copy; 2017-2020</p>
 	</div>
 </body>
 </html>
